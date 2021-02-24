@@ -1,0 +1,63 @@
+{
+  "manifest_version": 2,
+  "name": "NGA-收图助手",
+  "homepage_url": "http://blog.acs1899.com/",
+  "description": "监控发帖图片，不错过每一辆车",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "notifications",
+    "cookies",
+    "storage",
+    "unlimitedStorage",
+    "webRequest",
+    "webRequestBlocking",
+    "http://ngabbs.com/*",
+    "https://ngabbs.com/*",
+    "http://*.nga.cn/*",
+    "https://*.nga.cn/*",
+    "http://*.nga.178.com/*",
+    "https://*.nga.178.com/*",
+    "http://nga.178.com/*",
+    "https://nga.178.com/*"
+  ],
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://ngabbs.com/*",
+        "https://ngabbs.com/*",
+        "http://*.nga.cn/*",
+        "https://*.nga.cn/*",
+        "http://nga.178.com/*",
+        "https://nga.178.com/*"
+      ],
+      "js": ["js/jquery-3.3.1.min.js", "js/constant.js", "js/content-script.js"],
+      "css": ["css/custom.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "NGA-收图助手",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png"
+    }
+  },
+  "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://bbs.nga.cn; object-src 'self'; media-src 'self' filesystem:",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
