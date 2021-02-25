@@ -166,7 +166,7 @@ export const transferCollapse = function (str) {
   return str.replace(/\[collapse(=[^\]]{1,50})?\](.+?)\[\/collapse\]/gi, function ($0, $1, $2) {
     const btnTxt = $1 ? $1.substr(1) + ' ...' : '点击显示隐藏的内容 ...'
     return `
-      <a-button class="collapse_btn" size="small" icon="plus">${btnTxt}</a-button>
+      <button class="collapse_btn">${btnTxt}</button>
       <div class='collapse_block'>${$2}</div>`
   })
 }

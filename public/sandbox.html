@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head></head>
+<body>
+<script type="text/javascript">
+  // json字符串解析
+  const parseJson = function (json) {
+    let jsonObj = null
+
+    try {
+      jsonObj = JSON.parse(json)
+    } catch (ex) {
+      // new Function的方式，能自动给key补全双引号，但是不支持bigint
+      try {
+        jsonObj = new Function('return ' + json)()
+      } catch (exx) {
+        try {
+          // 是不是下面这种情况："{\"ret\":\"0\", \"msg\":\"ok\"}"
+          jsonObj = new Function("return '" + json + "'")()
+          if (typeof jsonObj === 'string') {
+            // 是个字符串，再转一次
+            jsonObj = new Function('return ' + jsonObj)()
+          }
+        } catch (exxx) {
+          console.log(exxx)
+        }
+      }
+    }
+
+    return jsonObj
+  }
+
+  // Set up message event handler:
+  window.addEventListener('message', function(event) {
+    const command = event.data.command
+    let result = "invalid request";
+
+    switch(command) {
+      case 'parseJson':
+        result = parseJson(event.data.context);
+        break;
+    }
+    event.source.postMessage({
+      id: event.data.id,
+      result: result
+    }, event.origin);
+  });
+</script>
+</body>
+</html>

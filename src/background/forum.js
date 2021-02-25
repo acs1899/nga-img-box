@@ -19,11 +19,37 @@ export const getRegionBase = function () {
   })
 }
 
+// 获取用户信息
+export const getUserInfo = function (options, callback) {
+  axios({
+    method: 'get',
+    url: config.nukeApi,
+    params: {
+      lite: 'js',
+      noprefix: '',
+      ...options
+    }
+  }).then((res) => {
+    const str = res.data.replace('window.script_muti_get_var_store=', '')
+    parseJson(str, function (json) {
+      callback && callback(json)
+    })
+  }).catch((err) => {
+    console.log(err)
+    callback && callback(err.response.data)
+  })
+}
+
 // 获取板块列表
 export const getRegionList = function (callback) {
   axios.get(config.regionApi).then((res) => {
-    eval(res.data)
-    callback && callback(window.script_muti_get_var_store)
+    const str = res.data.replace('window.script_muti_get_var_store=', '')
+    parseJson(str, function (json) {
+      callback && callback(json)
+    })
+  }).catch((err) => {
+    console.log(err)
+    callback && callback(err.response.data)
   })
 }
 
@@ -37,17 +63,24 @@ export const getList = function (options, callback) {
       ...options
     }
   }).then((res) => {
-    let json = res.data
+    const json = res.data
     if (typeof json === 'string') {
-      json = parseJson(json)
+      parseJson(json, function (json) {
+        // 获取图片baseURL
+        const { __GLOBAL } = json.data
+        updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
+
+        callback && callback(json)
+      })
+    } else {
+      // 获取图片baseURL
+      const { __GLOBAL } = json.data
+      updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
+
+      callback && callback(json)
     }
-
-    // 获取图片baseURL
-    const { __GLOBAL } = json.data
-    updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
-
-    callback && callback(json)
   }).catch((err) => {
+    console.log(err)
     callback && callback(err.response.data)
   })
 }
@@ -61,17 +94,24 @@ export const getPostDetail = function (options, callback) {
       ...options
     }
   }).then((res) => {
-    let json = res.data
+    const json = res.data
     if (typeof json === 'string') {
-      json = parseJson(json)
+      parseJson(json, function (json) {
+        // 获取图片baseURL
+        const { __GLOBAL } = json.data
+        updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
+
+        callback && callback(json)
+      })
+    } else {
+      // 获取图片baseURL
+      const { __GLOBAL } = json.data
+      updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
+
+      callback && callback(json)
     }
-
-    // 获取图片baseURL
-    const { __GLOBAL } = json.data
-    updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
-
-    callback && callback(json)
   }).catch((err) => {
+    console.log(err)
     callback && callback(err.response.data)
   })
 }
@@ -112,22 +152,4 @@ export const postReply = function (options) {
     form.remove()
     iframe.remove()
   }, 1000)
-}
-
-// 获取用户信息
-export const getUserInfo = function (options, callback) {
-  axios({
-    method: 'get',
-    url: config.nukeApi,
-    params: {
-      lite: 'js',
-      noprefix: '',
-      ...options
-    }
-  }).then((res) => {
-    eval(res.data)
-    callback && callback(window.script_muti_get_var_store)
-  }).catch((err) => {
-    callback && callback(err.response.data)
-  })
 }

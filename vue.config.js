@@ -4,6 +4,7 @@ function resolve (dir) {
 }
 
 module.exports = {
+  productionSourceMap: false,
   pages: {
     popup: {
       template: 'public/browser-extension.html',
@@ -34,6 +35,10 @@ module.exports = {
         args[0].push({
           from: resolve('src/constant/'),
           to: resolve('dist/js/constant.js')
+        })
+        args[0].push({
+          from: resolve('public/sandbox.html'),
+          to: resolve('dist/sandbox.html')
         })
         return args
       })

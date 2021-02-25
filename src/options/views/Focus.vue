@@ -25,7 +25,13 @@
       </a-col>
     </a-row>
 
-    <a-table :columns="columns" :data-source="list" :pagination="false">
+    <a-table
+      :columns="columns"
+      :data-source="list"
+      :pagination="false"
+      :expandIcon="customExpandIcon"
+      @expandedRowsChange="handleExpand"
+    >
       <div slot="subject" slot-scope="text, record">
         <a slot="title" @click="jumpToOrigin(record)">
           {{ record.subject }}
@@ -144,6 +150,40 @@ export default {
   },
   methods: {
     formatTime,
+    customExpandIcon (props) {
+      const { record, expanded, onExpand } = props
+
+      if (expanded) {
+        return (<a-icon type="minus-square" onClick={onExpand} />)
+      } else {
+        if (record.newImgLength > 0) {
+          return (
+            <a-badge
+              count={record.newImgLength}
+              offset={[10, -10]}
+            >
+              <a-icon type="plus-square" onClick={onExpand} />
+            </a-badge>
+          )
+        } else {
+          return (<a-icon type="plus-square" onClick={onExpand} />)
+        }
+      }
+    },
+    // 展开后重置新图片数
+    handleExpand (id) {
+      this.bg.searchFocus(id, (items) => {
+        if (items.length) {
+          const data = items[0]
+
+          data.newImgLength = 0
+
+          this.bg.saveFocus(id, data, () => {
+            this.bg.tipNewImg()
+          })
+        }
+      })
+    },
     handleIntervalChange (val) {
       this.bg.saveConfig({
         intervalTime: val

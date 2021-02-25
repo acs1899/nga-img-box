@@ -5,11 +5,15 @@ import * as Forum from './forum'
 import * as Cron from './cron'
 import queue from 'queue'
 
-const _init = async function () {
+const _init = function () {
   _interceptorInit()
   _addListener()
   checkCookie()
-  intervalCheckFocus()
+
+  const iframe = document.createElement('iframe')
+  iframe.id = 'sandboxFrame'
+  iframe.src = 'sandbox.html'
+  document.body.appendChild(iframe)
 }
 
 // 截获响应，修改响应头 content-type
@@ -125,18 +129,28 @@ const saveConfig = function (data) {
 }
 
 // 检测cookie
-const checkCookie = async function () {
-  await Utils.getCookie(config)
-  if (!config.ngaCookie.length || !config.ngaCookie.find((item) => item.name === 'ngaPassportCid')) {
-    config.ngaUid = ''
-  } else {
-    config.ngaUid = config.ngaCookie.find(item => item.name === 'ngaPassportUid').value || ''
-    await Forum.getRegionBase()
-    Forum.getRegionList()
-  }
+const checkCookie = function () {
+  return new Promise((resolve) => {
+    Utils.getCookie(config).then(function () {
+      if (!config.ngaCookie.length || !config.ngaCookie.find((item) => item.name === 'ngaPassportCid')) {
+        config.ngaUid = ''
+        cancelCheckFocus()
+      } else {
+        config.ngaUid = config.ngaCookie.find(item => item.name === 'ngaPassportUid').value || ''
+        Forum.getRegionBase().then(function () {
+          if (config.intervalOpen) {
+            intervalCheckFocus()
+          }
+        })
+      }
+      resolve()
+    })
+  })
 }
 
-_init()
+chrome.runtime.onInstalled.addListener(function () {
+  _init()
+})
 
 window.bg = {
   config,

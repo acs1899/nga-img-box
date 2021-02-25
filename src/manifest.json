@@ -47,6 +47,9 @@
     ],
     "persistent": true
   },
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
   "browser_action": {
     "default_popup": "popup.html",
     "default_title": "NGA-收图助手",
@@ -55,7 +58,7 @@
       "48": "icons/48.png"
     }
   },
-  "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://bbs.nga.cn; object-src 'self'; media-src 'self' filesystem:",
+  "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval' https://bbs.nga.cn; object-src 'self';",
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true

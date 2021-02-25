@@ -53,31 +53,31 @@ export const notifyText = function (options) {
   }
 }
 
-// json字符串解析
-export const parseJson = function (json) {
-  let jsonObj = null
+const messageMap = {}
 
-  try {
-    jsonObj = JSON.parse(json)
-  } catch (ex) {
-    // new Function的方式，能自动给key补全双引号，但是不支持bigint
-    try {
-      jsonObj = new Function('return ' + json)()
-    } catch (exx) {
-      try {
-        // 是不是下面这种情况："{\"ret\":\"0\", \"msg\":\"ok\"}"
-        jsonObj = new Function("return '" + json + "'")()
-        if (typeof jsonObj === 'string') {
-          // 是个字符串，再转一次
-          jsonObj = new Function('return ' + jsonObj)()
-        }
-      } catch (exxx) {
-        console.log(exxx)
-      }
-    }
+function handleMessage (event) {
+  const data = event.data
+
+  if (messageMap[data.id]) {
+    messageMap[data.id](data.result)
+    delete messageMap[data.id]
   }
+}
 
-  return jsonObj
+// 监听 sandbox 返回的消息
+window.addEventListener('message', handleMessage)
+
+// json字符串解析
+export const parseJson = function (json, callback) {
+  const iframe = document.getElementById('sandboxFrame')
+  const id = Math.random().toString(36).slice(-8)
+
+  messageMap[id] = callback
+  iframe.contentWindow.postMessage({
+    id,
+    command: 'parseJson',
+    context: json
+  }, '*')
 }
 
 // 获取本地数据
@@ -119,6 +119,9 @@ export const saveFocus = function (id, data, callback) {
   const key = `tid_${id}`
   setStorage(key, {
     imgList: [],
+    newImgLength: 0,
+    hasFirstCheck: false,
+    checkTimes: 0,
     ...data
   }, function () {
     const txt = '关注成功'
@@ -158,5 +161,24 @@ export const searchFocus = function (ids, callback) {
       }
     })
     callback && callback(_arr)
+  })
+}
+
+// 新图片提示
+export const tipNewImg = function () {
+  getAllFocus(function (arr) {
+    const newObj = arr.reduce((acc, curr) => {
+      return {
+        newImgLength: acc.newImgLength + curr.newImgLength
+      }
+    }, { newImgLength: 0 })
+
+    // 收集到新图片时，在插件图标上提示
+    if (newObj.newImgLength > 0) {
+      chrome.browserAction.setBadgeText({ text: `${newObj.newImgLength}` })
+      chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] })
+    } else {
+      chrome.browserAction.setBadgeText({ text: '' })
+    }
   })
 }

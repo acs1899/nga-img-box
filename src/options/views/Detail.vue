@@ -53,9 +53,10 @@
             </template>
           </a-tooltip>
           <div slot="content">
-            <html-content
-              :html="filterContent(item.content)"
-            />
+            <div
+              v-html="filterContent(item.content)"
+              :class="{'post-content': true, 'active-collapse': showCollapse}"
+              @click="handleContenClick"></div>
           </div>
         </a-comment>
       </a-list-item>
@@ -72,14 +73,10 @@
 </template>
 
 <script>
-import HtmlContent from '@/components/HtmlContent'
 import { filterContent, transferAnonyName } from '@/utils/index'
 
 export default {
   name: 'Detail',
-  components: {
-    HtmlContent
-  },
   data () {
     return {
       bg: chrome.extension.getBackgroundPage().bg,
@@ -87,6 +84,7 @@ export default {
       isShowReply: false,
       isShowReplyBtn: true,
       isFocus: false,
+      showCollapse: false,
       userInfo: {},
       subject: '',
       list: [],
@@ -145,6 +143,22 @@ export default {
   methods: {
     filterContent,
     transferAnonyName,
+    handleContenClick (e) {
+      const target = e.target
+      if (target.classList.contains('collapse_btn')) {
+        this.showCollapse = true
+      }
+      if (target.classList.contains('default-img')) {
+        target.classList.add('active-img')
+        target.classList.remove('default-img')
+        return false
+      }
+      if (target.classList.contains('active-img')) {
+        target.classList.add('default-img')
+        target.classList.remove('active-img')
+        return false
+      }
+    },
     handleChangePage (page) {
       this.params.page = page
       this.getList()
@@ -256,7 +270,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .option-app-detail {
   .header {
     background-color: #fff;
@@ -289,6 +303,45 @@ export default {
     cursor: default;
     &:hover {
       color: rgba(0, 0, 0, 0.45);
+    }
+  }
+  .post-content {
+    .del {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .facebread {
+      vertical-align: -12px;
+    }
+    .content-img {
+      display: inline-block;
+      margin: 2px;
+    }
+    .default-img {
+      width: 100px;
+      cursor: zoom-in;
+    }
+    .active-img {
+      display: block;
+      width: 100%;
+      cursor: zoom-out;
+    }
+    .quote {
+      padding: 10px 15px;
+      background-color: #f3f5f7;
+    }
+    .collapse_block {
+      display: none;
+    }
+    &.active-collapse {
+      .collapse_block {
+        display: block;
+      }
+    }
+    &.active-collapse {
+      .collapse_btn {
+        display: none;
+      }
     }
   }
 }

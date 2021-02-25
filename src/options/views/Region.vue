@@ -54,7 +54,6 @@ export default {
           }
         })
       }
-      console.log(arr)
       return arr.filter(v => v).filter(v => v.name)
     },
     iconApi () {

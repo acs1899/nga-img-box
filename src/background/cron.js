@@ -17,15 +17,17 @@ export const startCheckImg = function (option, callback) {
       Utils.searchFocus(option.tid, function (arrs) {
         const data = arrs[0]
         data.hasFirstCheck = true
-        data.checkTimes = 1
         Utils.saveFocus(option.tid, data)
+        callback && callback()
       })
+      Utils.tipNewImg()
     })
   } else {
     q.push(function () {
       return checkImg(option.tid, 'e')
     })
     q.start(function () {
+      Utils.tipNewImg()
       callback && callback()
     })
   }
@@ -58,7 +60,6 @@ const checkImg = function (tid, page) {
           if (__R[item].attachs) {
             console.log('检测到附件')
             console.log(`帖子id: ${tid} | 回复id: ${__R[item].pid}`)
-            console.log(__R[item].attachs)
             const finded = data.imgList.find((val) => val.pid === __R[item].pid)
             if (!finded) {
               data.imgList.push({
@@ -68,16 +69,19 @@ const checkImg = function (tid, page) {
                   return __R[item].attachs[val]
                 })
               })
+              data.newImgLength += Object.keys(__R[item].attachs).length
             } else {
               const img = Object.keys(__R[item].attachs).map((val) => {
                 if (!finded.attachs.find((k) => k.attachurl === __R[item].attachs[val].attachurl)) {
                   return __R[item].attachs[val]
                 }
               }).filter(v => v)
+              data.newImgLength += img.length
               finded.attachs.concat(img)
             }
           }
         })
+        // 保存数据
         Utils.saveFocus(tid, data, function () {
           resolve()
         })
