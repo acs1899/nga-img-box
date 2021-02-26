@@ -13,15 +13,19 @@
 **注意：目前NGA论坛有多个域名可访问，为了方便起见，本插件使用的是 ```https://bbs.nga.com``` 域名，所以插件内的登陆状态与 ```https://bbs.nga.com``` 保持一致。如果你常用的论坛域名不是 ```https://bbs.nga.com```，请到插件设置页面登陆**
  
 - 打开设置页面
+
 ![打开设置页面](https://user-images.githubusercontent.com/2403107/109130073-47489d00-778c-11eb-83a8-0a801b8927af.png)
 
 - 点击登录
+
 ![点击登录](https://user-images.githubusercontent.com/2403107/109130332-91318300-778c-11eb-822b-c618e09cceca.png)
 
 - 登录
+
 ![登录](https://user-images.githubusercontent.com/2403107/109130486-c047f480-778c-11eb-8893-57c1a62e313e.png)
 
 - 登陆成功
+
 ![设置tab](https://user-images.githubusercontent.com/2403107/109132117-6cd6a600-778e-11eb-831a-16aba1f0bedb.png)
 
 ### 2、打开论坛
