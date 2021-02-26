@@ -265,7 +265,7 @@ export default {
                   if (imgCount === 0) {
                     zip.generateAsync({ type: 'blob' }).then(function (content) {
                       data.downloadLoading = false
-                      saveAs(content, `${data.tid}.zip`)
+                      saveAs(content, `${formatTime(new Date(), '{y}-{m}-{d}')}-${data.tid}.zip`)
                     })
                   }
                 })
