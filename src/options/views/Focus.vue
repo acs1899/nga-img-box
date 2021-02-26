@@ -21,7 +21,10 @@
         <span v-if="checkStatus">
           <a-icon type="sync" spin />扫描中...
         </span>
-        <a-button :type="checkStatus ? '' : 'primary'" @click="triggerCheck">{{ checkStatus ? '取消扫描' : '开始扫描' }}</a-button>
+        <a-button :type="checkStatus ? '' : 'primary'" @click="triggerCheck">
+          {{ checkStatus ? '取消扫描' : '开始扫描' }}
+        </a-button>
+        <a-button style="margin-left: 10px;" type="danger" @click="clearFocus">清空关注列表</a-button>
       </a-col>
     </a-row>
 
@@ -147,6 +150,11 @@ export default {
     // 清除storage监听
     chrome.storage.onChanged.removeListener(this.getList)
   },
+  watch: {
+    'bg.config.intervalOpen' (val) {
+      this.checkStatus = val
+    }
+  },
   methods: {
     formatTime,
     customExpandIcon (props) {
@@ -230,11 +238,23 @@ export default {
     removeFocus (data) {
       this.$confirm({
         title: '取消关注',
-        content: '取消关注后，已搜集的图片将被删除，是否取消关注',
+        content: '取消关注后，已搜集的图片将被删除，请提前下载。是否取消关注？',
         okText: '确定',
         cancelText: '取消',
         onOk: () => {
           this.bg.removeFocus(data.tid)
+        },
+        onCancel () {}
+      })
+    },
+    clearFocus () {
+      this.$confirm({
+        title: '取消所有关注',
+        content: '取消所有关注，已搜集的图片将被删除，请提前下载。是否取消关注？',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: () => {
+          this.bg.clearFocus()
         },
         onCancel () {}
       })

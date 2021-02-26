@@ -136,6 +136,13 @@ export const removeFocus = function (ids, callback) {
   })
 }
 
+// 清空关注
+export const clearFocus = function (ids, callback) {
+  chrome.storage.local.clear(function () {
+    callback && callback()
+  })
+}
+
 // 关注列表
 export const getAllFocus = function (callback) {
   getStorage(null, function (items) {
