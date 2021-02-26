@@ -129,6 +129,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .option-app-setting {}
 </style>

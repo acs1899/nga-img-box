@@ -2,11 +2,9 @@
   <div id="app">
     <a-tabs :activeKey="currentPath" @change="go">
       <a-tab-pane key="region" tab="浏览">
-        <!--<transition name="left-transform" mode="out-in">-->
-          <keep-alive :include="keepAliveComponents">
-            <router-view v-if="bg.config.ngaUid" />
-          </keep-alive>
-        <!--</transition>-->
+        <keep-alive :include="keepAliveComponents">
+          <router-view v-if="bg.config.ngaUid" />
+        </keep-alive>
       </a-tab-pane>
       <a-tab-pane key="focus" tab="关注列表">
         <focus />
@@ -14,10 +12,11 @@
       <a-tab-pane key="setting" tab="设置">
         <setting />
       </a-tab-pane>
+      <span class="version" slot="tabBarExtraContent">
+        <b>当前版本</b>
+        <i>v{{manifest.version}}</i>
+      </span>
     </a-tabs>
-    <!--<transition name="right-transform" mode="out-in">-->
-      <!--<router-view v-if="!$route.meta.alive" />-->
-    <!--</transition>-->
   </div>
 </template>
 
@@ -33,7 +32,8 @@ export default {
   },
   data () {
     return {
-      bg: chrome.extension.getBackgroundPage().bg
+      bg: chrome.extension.getBackgroundPage().bg,
+      manifest: chrome.runtime.getManifest()
     }
   },
   created () {
@@ -54,56 +54,23 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #app {
   padding: 20px;
-
-  /*left transition*/
-  .left-enter-active,
-  .left-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .left-enter,
-  .left-leave-active {
-    opacity: 0;
-  }
-
-  .left-transform-leave-active,
-  .left-transform-enter-active {
-    transition: all .5s;
-  }
-  .left-transform-enter {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  .left-transform-leave-to {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  /*right transition*/
-  .right-enter-active,
-  .right-leave-active {
-    transition: opacity 0.3s;
-  }
-
-  .right-enter,
-  .right-leave-active {
-    opacity: 0;
-  }
-
-  .right-transform-leave-active,
-  .right-transform-enter-active {
-    transition: all .5s;
-  }
-  .right-transform-enter {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  .right-transform-leave-to {
-    opacity: 0;
-    transform: translateX(30px);
+  .version {
+    b, i {
+      background: #5b5b5b;
+      padding: 3px 5px;
+      border-radius: 3px 0 0 3px;
+      color: #fff;
+      font-weight: lighter;
+      font-style: normal;
+      font-family: monospace;
+    }
+    i {
+      border-radius: 0 3px 3px 0;
+      background: #0e7fbf;
+    }
   }
 }
 </style>

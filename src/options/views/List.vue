@@ -161,7 +161,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .option-app-list {
   .thread-list {
     padding: 15px 20px;
