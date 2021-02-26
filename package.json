@@ -1,6 +1,6 @@
 {
   "name": "nga-image-box",
-  "version": "2020.02.0001",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service build --mode development --watch",
