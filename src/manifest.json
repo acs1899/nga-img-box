@@ -5,7 +5,6 @@
   "description": "监控发帖图片，不错过每一辆车",
   "permissions": [
     "tabs",
-    "activeTab",
     "notifications",
     "cookies",
     "storage",
