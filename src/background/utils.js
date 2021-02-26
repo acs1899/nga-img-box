@@ -92,7 +92,7 @@ export const setStorage = function (key, value, callback) {
   const data = {}
   data[key] = value
   chrome.storage.local.set(data, function () {
-    return callback && callback()
+    return callback && callback(value)
   })
 }
 
@@ -123,9 +123,8 @@ export const saveFocus = function (id, data, callback) {
     hasFirstCheck: false,
     checkTimes: 0,
     ...data
-  }, function () {
-    const txt = '关注成功'
-    callback && callback(txt)
+  }, function (res) {
+    callback && callback(res)
   })
 }
 

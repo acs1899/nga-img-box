@@ -3,9 +3,9 @@
     <a-affix :offset-top="0">
       <a-page-header
         class="header"
-        :title="subject"
         @back="goBack"
       >
+        <div slot="title" v-html="subject"></div>
         <template slot="extra">
           <a-button type="primary" @click="jumpToOrigin">原贴链接<a-icon type="link" /></a-button>
           <a-button v-if="!isFocus" @click="focus">关注</a-button>

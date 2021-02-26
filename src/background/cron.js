@@ -80,7 +80,7 @@ const checkImg = function (tid, page) {
               }
             } else {
               const img = Object.keys(__R[item].attachs).map((val) => {
-                if (!finded.attachs.find((k) => k.name === __R[item].attachs[val].name)) {
+                if (!finded.attachs.find((k) => k.attachurl === __R[item].attachs[val].attachurl)) {
                   return __R[item].attachs[val]
                 }
               }).filter(v => v)
@@ -94,52 +94,58 @@ const checkImg = function (tid, page) {
             }
           }
 
-          // 检测内容
-          const imgs = []
-          __R[item].content.replace(/\[img(-?\d{0,3})\](.+?)\[\/img\]/gi, function ($0, $1, $2) {
-            imgs.push($2)
+          // 当内容包含引用时 - 检测引用内容图片
+          let quote = ''
+          __R[item].content.replace(/\[quote\]([^\x00]+?)\[\/quote\]/gi, function ($0, $1) {
+            quote = $1
           })
-          if (imgs.length) {
-            const finded = data.imgList.find((val) => val.pid === __R[item].pid)
-            const attachs = imgs.map((val) => {
-              let name = ''
-              let ext = ''
-              val.replace(/\/([^/]+)\.([^.]+)$/g, function ($0, $1, $2) {
-                name = $1
-                ext = $2
-              })
-              return {
-                attachurl: val,
-                name,
-                ext
-              }
+          if (quote) {
+            const imgs = []
+            quote.replace(/\[img(-?\d{0,3})\](.+?)\[\/img\]/gi, function ($0, $1, $2) {
+              imgs.push($2)
             })
-
-            if (!finded) {
-              data.imgList.push({
-                pid: __R[item].pid,
-                baseUrl: config.imgBaseApi,
-                attachs
+            if (imgs.length) {
+              const finded = data.imgList.find((val) => val.pid === __R[item].pid)
+              const attachs = imgs.map((val) => {
+                let name = ''
+                let ext = ''
+                val.replace(/\/([^/]+)\.([^.]+)$/g, function ($0, $1, $2) {
+                  name = $1
+                  ext = $2
+                })
+                return {
+                  attachurl: val.replace(/^\.\//, ''),
+                  name,
+                  ext
+                }
               })
 
-              data.newImgLength += attachs.length
+              if (!finded) {
+                data.imgList.push({
+                  pid: __R[item].pid,
+                  baseUrl: config.imgBaseApi,
+                  attachs
+                })
 
-              if (attachs.length) {
-                console.log(`检测到内容图片: 帖子id: ${tid} | 回复id: ${__R[item].pid} | 新增`)
-                console.table(attachs.map(p => `${p.attachurl}`))
-              }
-            } else {
-              const img = attachs.map((val) => {
-                if (!finded.attachs.find((k) => k.name === val.name)) {
-                  return val
+                data.newImgLength += attachs.length
+
+                if (attachs.length) {
+                  console.log(`检测到内容图片: 帖子id: ${tid} | 回复id: ${__R[item].pid} | 新增`)
+                  console.table(attachs.map(p => `${p.attachurl}`))
                 }
-              }).filter(v => v)
-              data.newImgLength += img.length
-              finded.attachs = finded.attachs.concat(img)
+              } else {
+                const img = attachs.map((val) => {
+                  if (!finded.attachs.find((k) => k.attachurl === val.attachurl)) {
+                    return val
+                  }
+                }).filter(v => v)
+                data.newImgLength += img.length
+                finded.attachs = finded.attachs.concat(img)
 
-              if (img.length) {
-                console.log(`检测到内容图片: 帖子id: ${tid} | 回复id: ${__R[item].pid} | 更新`)
-                console.table(img.map(p => `${p.attachurl}`))
+                if (img.length) {
+                  console.log(`检测到内容图片: 帖子id: ${tid} | 回复id: ${__R[item].pid} | 更新`)
+                  console.table(img.map(p => `${p.attachurl}`))
+                }
               }
             }
           }

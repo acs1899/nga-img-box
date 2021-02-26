@@ -48,8 +48,8 @@ const _addListener = function () {
     if (request.type === MSG_TYPE.ADD_FOCUS) {
       console.log('添加关注帖子')
       console.log(request.data)
-      Utils.saveFocus(request.data.tid, request.data, function () {
-        Cron.startCheckImg(request.data)
+      Utils.saveFocus(request.data.tid, request.data, function (data) {
+        Cron.startCheckImg(data)
         const response = { msg: '添加成功' }
         callback && callback(response)
       })

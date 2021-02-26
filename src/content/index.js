@@ -1,11 +1,19 @@
 /* eslint-disable */
+
 $(function () {
   let focusList = []
 
   // 获取关注列表
   function getAllFocus () {
-    chrome.runtime.sendMessage({ type: MSG_TYPE.GET_FOCUS }, function (res) {
-      focusList = res
+    console.log('storage change')
+    chrome.storage.local.get(null, function (items) {
+      const _arr = []
+      Object.keys(items).forEach((val) => {
+        if (items[val]) {
+          _arr.push(items[val])
+        }
+      })
+      focusList = _arr
       updateFocusBtn()
     })
   }
@@ -46,7 +54,8 @@ $(function () {
         const subject = $this.find('.c2 a.topic').text()
         const author = $this.find('.c3 a.author').text()
         const postdate = '20' + $this.find('.c3 span.postdate').attr('title')
-        const hasFocus = !!focusList.find((item) => item.tid === tid)
+        const replies = +($this.find('.c1 .replies').text())
+        const hasFocus = !!focusList.find(function(item){return item.tid === tid})
 
         $td.addClass('c5')
         button.css({
@@ -58,6 +67,7 @@ $(function () {
         button.data('subject', subject)
         button.data('author', author)
         button.data('postdate', postdate)
+        button.data('replies', replies)
         button.data('hasFocus', hasFocus)
 
         if (hasFocus) {
@@ -87,15 +97,15 @@ $(function () {
     // 帖子详情页
     if (postList.length) {
       const el = $('#postbtop tr').not(':has(.focus-btn)')
+      const tid = +getQueryString('tid', window.location.search)
 
       el.each(function () {
         const $td = $(document.createElement('td'))
         const $a = $(document.createElement('a'))
-        const tid = +getQueryString('tid', window.location.search)
         const subject = $('#postsubject0').text()
         const author = $('#postauthor0').text()
         const postdate = $('#postdate0').text()
-        const hasFocus = !!focusList.find((item) => item.tid === tid)
+        const hasFocus = !!focusList.find(function(item){return item.tid === tid})
 
         $a.addClass('focus-btn')
 
@@ -128,8 +138,23 @@ $(function () {
 
         $td.append($a)
         el.prepend($td)
+
+        getPostDetail(tid, function (res) {
+          $a.data('replies', res.__ROWS)
+        })
       })
     }
+  }
+
+  function getPostDetail (tid, callback) {
+    $.get(window.location.href, {
+      lite: 'js',
+      noprefix: '',
+      tid: tid
+    }, function (res) {
+      console.log(res)
+      callback && callback(res.data)
+    })
   }
 
   // 更新关注按钮状态
@@ -143,7 +168,7 @@ $(function () {
         const $this = $(this)
         const tid = $this.data('tid')
 
-        if (!!focusList.find((item) => item.tid === tid)) {
+        if (!!focusList.find(function(item){return item.tid === tid})) {
           $this.data('hasFocus', true)
           focusBtnStyle($this, true)
         } else {
@@ -158,7 +183,7 @@ $(function () {
         const $this = $(this)
         const tid = $this.data('tid')
 
-        if (!!focusList.find((item) => item.tid === tid)) {
+        if (!!focusList.find(function(item){return item.tid === tid})) {
           $this.data('hasFocus', true)
           focusBtnStyle($this, true)
         } else {
@@ -186,6 +211,34 @@ $(function () {
     }
   }
 
+  // json字符串解析
+  function parseJson (json) {
+    let jsonObj = null
+
+    try {
+      jsonObj = JSON.parse(json)
+    } catch (ex) {
+      // new Function的方式，能自动给key补全双引号，但是不支持bigint
+      try {
+        jsonObj = new Function('return ' + json)()
+      } catch (exx) {
+        try {
+          // 是不是下面这种情况："{\"ret\":\"0\", \"msg\":\"ok\"}"
+          jsonObj = new Function("return '" + json + "'")()
+          if (typeof jsonObj === 'string') {
+            // 是个字符串，再转一次
+            jsonObj = new Function('return ' + jsonObj)()
+          }
+        } catch (exxx) {
+          console.log(exxx)
+        }
+      }
+    }
+
+    return jsonObj
+  }
+
+  // URL截取参数
   function getQueryString (name, url) {
     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`, 'i')
     const r = url.substr(1).match(reg)

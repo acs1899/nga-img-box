@@ -37,6 +37,10 @@ module.exports = {
           to: resolve('dist/js/constant.js')
         })
         args[0].push({
+          from: resolve('src/content/'),
+          to: resolve('dist/js/content-script.js')
+        })
+        args[0].push({
           from: resolve('public/sandbox.html'),
           to: resolve('dist/sandbox.html')
         })
@@ -48,13 +52,6 @@ module.exports = {
       componentOptions: {
         background: {
           entry: 'src/background/index.js'
-        },
-        contentScripts: {
-          entries: {
-            'content-script': [
-              'src/content/index.js'
-            ]
-          }
         }
       }
     }

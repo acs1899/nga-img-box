@@ -32,7 +32,9 @@
           <a-icon type="star" :theme="item.isFocus ? 'filled': 'outlined'" style="margin-right: 8px" @click="handleFocus(item)" />
         </span>
         <a-list-item-meta :description="item.author" >
-          <a slot="title" @click="jumpToDetail(item)">{{ item.subject }} <span class="sub-parent">{{ item.parent ? `[${item.parent[2]}]` : '' }}</span></a>
+          <a slot="title" @click="jumpToDetail(item)">
+            <span v-html="item.subject"></span>
+            <span class="sub-parent">{{ item.parent ? `[${item.parent[2]}]` : '' }}</span></a>
         </a-list-item-meta>
       </a-list-item>
     </a-list>
