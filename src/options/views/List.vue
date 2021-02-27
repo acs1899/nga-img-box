@@ -104,7 +104,7 @@ export default {
 
           this.list = Object.keys(res.data.__T).map((item) => {
             res.data.__T[item].isFocus = false
-            res.data.__T[item].author = res.data.__T[item].author.match(/^#anony/) ? transferAnonyName(res.data.__T[item].author)[0] : res.data.__T[item].author
+            res.data.__T[item].author = (res.data.__T[item].author || '').match(/^#anony/) ? transferAnonyName(res.data.__T[item].author)[0] : res.data.__T[item].author
             return res.data.__T[item]
           })
           this.pageParams.pageSize = res.data.__T__ROWS
