@@ -147,13 +147,20 @@ $(function () {
   }
 
   function getPostDetail (tid, callback) {
-    $.get(window.location.href, {
-      lite: 'js',
-      noprefix: '',
-      tid: tid
-    }, function (res) {
-      console.log(res)
-      callback && callback(res.data)
+    $.ajax(window.location.href, {
+      data: {
+        lite: 'js',
+        noprefix: '',
+        tid: tid
+      },
+      success: function (res) {
+        console.log(res)
+        callback && callback(res.data)
+      },
+      error: function (res) {
+        const json = parseJson(res.responseText)
+        callback && callback(json.data)
+      }
     })
   }
 
