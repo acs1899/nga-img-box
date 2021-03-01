@@ -54,7 +54,7 @@
           </a-tooltip>
           <div slot="content">
             <div
-              v-html="filterContent(item.content)"
+              v-html="filterContent(`${item.content}`)"
               :class="{'post-content': true, 'active-collapse': showCollapse}"
               @click="handleContenClick"></div>
           </div>
