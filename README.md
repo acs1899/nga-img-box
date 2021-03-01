@@ -1,5 +1,8 @@
 # NGA收图助手
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/acs1899/nga-img-box)
+![GitHub](https://img.shields.io/github/license/acs1899/nga-img-box)
+
 **NGA收图助手** 一个专门针对NGA论坛的自动收图小工具
 
 ---
