@@ -4,7 +4,6 @@
   "homepage_url": "http://blog.acs1899.com/",
   "description": "监控发帖图片，不错过每一辆车",
   "permissions": [
-    "tabs",
     "notifications",
     "cookies",
     "storage",
