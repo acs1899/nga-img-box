@@ -190,7 +190,7 @@ export default {
         }
 
         this.list = Object.keys(__R).map((item) => __R[item])
-        this.authorId = this.list[0].authorid
+        this.authorId = __T.authorid
         this.pageParams.page = res.data.__PAGE
         this.pageParams.pageSize = res.data.__R__ROWS
         this.pageParams.total = res.data.__ROWS

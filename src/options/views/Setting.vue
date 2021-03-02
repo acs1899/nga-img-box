@@ -41,7 +41,9 @@
       :backIcon="false"
     >
       <p>本插件适用于监控论坛内指定关注的帖子，收集回帖内的图片。</p>
-      <a-button type="primary">检查更新</a-button>
+      <a-button type="primary" @click="checkRelease">手动检查更新</a-button>
+      <a v-show="hasNewVersion" style="margin-left:10px;vertical-align: bottom;" href="https://blog.acs1899.com/lab/nga-img-box" target="_blank">发现新版本，去下载</a>
+      <span class="tip">不能通过应用商店更新时，可以尝试手动下载</span>
     </a-page-header>
     <!-- 登录 -->
     <a-modal
@@ -58,12 +60,16 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Setting',
   data () {
     return {
       bg: chrome.extension.getBackgroundPage().bg,
       uid: chrome.extension.getBackgroundPage().bg.config.ngaUid || '',
+      manifest: chrome.runtime.getManifest(),
+      hasNewVersion: false,
       userInfo: null,
       isShowLoginDialog: false
     }
@@ -124,11 +130,28 @@ export default {
         }
       }
       return `<span title='${t}'>${h}</span>`
+    },
+    checkRelease () {
+      axios.get('https://api.github.com/repos/acs1899/nga-img-box/releases').then((res) => {
+        const { data } = res
+        if (data.length && data[0].tag_name !== `v${this.manifest.version}`) {
+          this.hasNewVersion = true
+        } else {
+          this.$message.success('当前为最新版本')
+        }
+      })
     }
   }
 }
 </script>
 
 <style lang="scss">
-.option-app-setting {}
+.option-app-setting {
+  .tip {
+    margin-left: 10px;
+    vertical-align: bottom;
+    color: #999;
+    font-size: 12px;
+  }
+}
 </style>
