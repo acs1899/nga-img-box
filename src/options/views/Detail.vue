@@ -74,6 +74,8 @@
 
 <script>
 import { filterContent, transferAnonyName } from '@/utils/index'
+import Viewer from 'viewerjs'
+import 'viewerjs/dist/viewer.css'
 
 export default {
   name: 'Detail',
@@ -85,6 +87,7 @@ export default {
       isShowReplyBtn: true,
       isFocus: false,
       showCollapse: false,
+      viewer: null,
       userInfo: {},
       subject: '',
       list: [],
@@ -148,16 +151,6 @@ export default {
       if (target.classList.contains('collapse_btn')) {
         this.showCollapse = true
       }
-      if (target.classList.contains('default-img')) {
-        target.classList.add('active-img')
-        target.classList.remove('default-img')
-        return false
-      }
-      if (target.classList.contains('active-img')) {
-        target.classList.add('default-img')
-        target.classList.remove('active-img')
-        return false
-      }
     },
     handleChangePage (page) {
       this.params.page = page
@@ -202,6 +195,28 @@ export default {
         }
 
         this.checkFocus()
+
+        this.viewer && this.viewer.destroy()
+        setTimeout(() => {
+          this.viewer = new Viewer(document.querySelectorAll('.post-list')[0], {
+            filter (image) {
+              return image.classList.contains('content-img')
+            },
+            button: false,
+            focus: false,
+            fullscreen: false,
+            loop: false,
+            rotatable: false,
+            scalable: false,
+            slideOnTouch: false,
+            title: false,
+            toggleOnDblclick: false,
+            toolbar: false,
+            tooltip: false,
+            transition: false,
+            zoomOnTouch: false
+          })
+        }, 1000)
       })
     },
     getAvatar (avatar) {
@@ -320,11 +335,6 @@ export default {
     .default-img {
       width: 100px;
       cursor: zoom-in;
-    }
-    .active-img {
-      display: block;
-      width: 100%;
-      cursor: zoom-out;
     }
     .quote {
       padding: 10px 15px;
