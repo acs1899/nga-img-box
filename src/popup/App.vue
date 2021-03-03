@@ -25,7 +25,12 @@
               设置
             </a>
           </a-col>
-          <a-col class="f-r" :span="8" :offset="8"></a-col>
+          <a-col class="f-r" :span="8" :offset="8">
+            <a @click="jumpToFeadback">
+              <a-icon theme="filled" type="message" />
+              反馈
+            </a>
+          </a-col>
         </a-row>
       </a-list-item>
     </a-list>
@@ -60,6 +65,11 @@ export default {
     jumpToSetting (e) {
       e.preventDefault()
       chrome.runtime.openOptionsPage()
+      window.close()
+    },
+    jumpToFeadback (e) {
+      e.preventDefault()
+      window.open('https://blog.acs1899.com/lab/nga-img-box#vcomment')
       window.close()
     }
   }
