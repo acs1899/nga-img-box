@@ -6,6 +6,28 @@
 **NGA收图助手** 一个专门针对NGA论坛的自动收图小工具
 
 ---
+
+## 安装说明
+
+### 1、Chrome web store 安装
+
+[https://chrome.google.com/webstore/detail/nga-%E6%94%B6%E5%9B%BE%E5%8A%A9%E6%89%8B/jhcifjenfhgnchghmabpopcjekfmecpo?utm_source=chrome-ntp-icon](https://chrome.google.com/webstore/detail/nga-%E6%94%B6%E5%9B%BE%E5%8A%A9%E6%89%8B/jhcifjenfhgnchghmabpopcjekfmecpo?utm_source=chrome-ntp-icon)
+
+### 2、本地安装
+
+- crx安装
+    - [下载最新版本](https://github.com/acs1899/nga-img-box/releases) 下载crx文件
+    - 打开Chrome浏览器，地址栏输入 chrome://extensions/
+    - 勾选 ```开发者模式```
+    - 将.crx的文件拖拽到浏览器中间，会出现 ```拖拽以安装的提示```
+    - 如果浏览器能直接安装即成功，如果不能安装，或者提示只能通过Chrome网上应用商店安装该程序，请参照 ```压缩文件安装```
+
+- 压缩文件安装
+    - [下载最新版本](https://github.com/acs1899/nga-img-box/releases) 下载zip文件并解压到指定的文件夹（```解压出来文件夹不能删除```）
+    - 打开Chrome浏览器，地址栏输入 ```chrome://extensions/```, 勾择```开发者模式```，点击```加载已解压的扩展程序```
+    - 选择你刚刚解压所在的文件夹，点击确定。扩展程序列表出现你导入的扩展程序即为成功
+
+---
  
 ## 使用说明
 
