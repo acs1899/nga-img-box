@@ -51,6 +51,7 @@
               <template v-for="val in item.attachs">
                 <img
                   :class="{'blur-img': pixelate, 'default-img': true}"
+                  v-if="val.type === 'img'"
                   :key="val.name"
                   :src="val.attachurl.match(/^http/) ? val.attachurl : `${item.baseUrl}${val.attachurl}`"
                   @click="handleClickImg"

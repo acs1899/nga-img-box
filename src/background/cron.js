@@ -114,6 +114,7 @@ const checkImg = function (tid, page) {
                   ext = $2
                 })
                 return {
+                  type: 'img',
                   attachurl: val.replace(/^\.\//, ''),
                   name,
                   ext
