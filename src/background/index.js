@@ -148,9 +148,7 @@ const checkCookie = function () {
   })
 }
 
-chrome.runtime.onInstalled.addListener(function () {
-  _init()
-})
+_init()
 
 window.bg = {
   config,
