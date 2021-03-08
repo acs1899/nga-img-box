@@ -69,7 +69,7 @@ export default {
     },
     jumpToFeadback (e) {
       e.preventDefault()
-      window.open('https://blog.acs1899.com/lab/nga-img-box#vcomment')
+      window.open('http://ngaimgbox.appchizi.com/public/feedback.html')
       window.close()
     }
   }

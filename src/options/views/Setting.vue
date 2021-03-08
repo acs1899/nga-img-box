@@ -42,7 +42,7 @@
     >
       <p>本插件适用于监控论坛内指定关注的帖子，收集回帖内的图片。</p>
       <a-button type="primary" @click="checkRelease">手动检查更新</a-button>
-      <a v-show="hasNewVersion" style="margin-left:10px;vertical-align: bottom;" href="https://blog.acs1899.com/lab/nga-img-box" target="_blank">发现新版本，去下载</a>
+      <a v-show="hasNewVersion" style="margin-left:10px;vertical-align: bottom;" href="http://ngaimgbox.appchizi.com/public/index.html" target="_blank">发现新版本，去下载</a>
       <span class="tip">不能通过应用商店更新时，可以尝试手动下载</span>
     </a-page-header>
     <!-- 登录 -->
