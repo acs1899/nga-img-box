@@ -80,7 +80,6 @@
         <a-button type="danger" @click="removeFocus(record)">取消关注</a-button>
       </div>
     </a-table>
-    <canvas id="canvas"></canvas>
   </div>
 </template>
 
@@ -271,27 +270,17 @@ export default {
           item.attachs.forEach((val) => {
             if (val.type === 'img') {
               imgCount++
-              const img = document.createElement('img')
-              img.onload = function () {
-                const canvas = document.getElementById('canvas')
-                const ctx = canvas.getContext('2d')
-                canvas.width = this.naturalWidth
-                canvas.height = this.naturalHeight
-
-                ctx.drawImage(img, 0, 0, this.naturalWidth, this.naturalHeight)
-
-                canvas.toBlob(function (blob) {
-                  imgFolder.file(`${val.name}.${val.ext}`, blob, { binary: true })
-                  imgCount--
-                  if (imgCount === 0) {
-                    zip.generateAsync({ type: 'blob' }).then(function (content) {
-                      data.downloadLoading = false
-                      saveAs(content, `${formatTime(new Date(), '{y}-{m}-{d}')}-${data.tid}.zip`)
-                    })
-                  }
-                })
-              }
-              img.src = `${item.baseUrl}${val.attachurl}`
+              const url = val.attachurl.match(/^http/) ? val.attachurl : `${item.baseUrl}${val.attachurl}`
+              this.bg.getRemoteImgBinary(url, function (res) {
+                imgFolder.file(`${val.name}.${val.ext}`, res.data, { binary: true })
+                imgCount--
+                if (imgCount === 0) {
+                  zip.generateAsync({ type: 'blob' }).then(function (content) {
+                    data.downloadLoading = false
+                    saveAs(content, `${formatTime(new Date(), '{y}-{m}-{d}')}-${data.tid}.zip`)
+                  })
+                }
+              })
             }
           })
         })
@@ -308,10 +297,6 @@ export default {
 
 <style lang="scss">
 .option-app-focus {
-  #canvas {
-    position: absolute;
-    top: -9999px;
-  }
   .default-img {
     margin-right: 10px;
     width: 100px;

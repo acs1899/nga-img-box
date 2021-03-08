@@ -1,3 +1,4 @@
+import axios from 'axios'
 import config from './config'
 
 // 获取cookie
@@ -186,5 +187,14 @@ export const tipNewImg = function () {
     } else {
       chrome.browserAction.setBadgeText({ text: '' })
     }
+  })
+}
+
+// 获取远程图片二进制数据
+export const getRemoteImgBinary = function (url, callback) {
+  axios.get(url, {
+    responseType: 'blob'
+  }).then((res) => {
+    callback && callback(res)
   })
 }
