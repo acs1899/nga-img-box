@@ -4,6 +4,10 @@
       <a-tab-pane key="region" tab="浏览">
         <keep-alive :include="keepAliveComponents">
           <router-view v-if="bg.config.ngaUid" />
+          <a-empty v-else>
+            <span slot="description"> 请先关联账号 </span>
+            <a-button type="primary" @click="go('setting')">去关联</a-button>
+          </a-empty>
         </keep-alive>
       </a-tab-pane>
       <a-tab-pane key="focus" tab="关注列表">

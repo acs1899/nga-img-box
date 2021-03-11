@@ -30,6 +30,10 @@ const _interceptorInit = function () {
         responseHeaders: details.responseHeaders
       }
     }
+
+    if (details.url.match('login_set_cookie_quick')) {
+      chrome.runtime.sendMessage({ type: MSG_TYPE.HAS_LOGIN })
+    }
   }
 
   if (!chrome.webRequest.onHeadersReceived.hasListener(_beforeResponseHeader)) {

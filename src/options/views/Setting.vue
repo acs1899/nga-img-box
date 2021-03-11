@@ -61,6 +61,7 @@
 
 <script>
 import axios from 'axios'
+import { MSG_TYPE } from '@/constant'
 
 export default {
   name: 'Setting',
@@ -77,12 +78,14 @@ export default {
   async created () {
     await this.bg.checkCookie()
     this.uid = this.bg.config.ngaUid
+    chrome.runtime.onMessage.addListener((request) => {
+      if (request.type === MSG_TYPE.HAS_LOGIN) {
+        this.handleCancelLogin()
+        window.location.reload()
+      }
+    })
     if (this.uid) {
       this.getUserInfo()
-    } else {
-      window.addEventListener('message', (e) => {
-        console.log(e)
-      })
     }
   },
   methods: {

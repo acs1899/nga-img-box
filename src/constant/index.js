@@ -1,7 +1,8 @@
 const MSG_TYPE = {
   GET_FOCUS: 'get_focus',
   ADD_FOCUS: 'add_focus',
-  DEL_FOCUS: 'del_focus'
+  DEL_FOCUS: 'del_focus',
+  HAS_LOGIN: 'has_login'
 }
 
 const FACE_MAP = {
