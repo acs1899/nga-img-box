@@ -15,6 +15,7 @@
             回帖时间
           </a-select-option>
         </a-select>
+        <a-button @click="refresh">刷新</a-button>
       </template>
     </a-page-header>
     <a-list
@@ -153,6 +154,9 @@ export default {
     },
     jumpToDetail (item) {
       this.$router.push(`/detail?tid=${item.tid}`)
+    },
+    refresh () {
+      this.resetList()
     },
     goBack () {
       this.$router.back()
