@@ -153,7 +153,11 @@ export default {
       this.resetList()
     },
     jumpToDetail (item) {
-      this.$router.push(`/detail?tid=${item.tid}`)
+      const a = document.createElement('a')
+      a.href = item.tpcurl
+      const searchParams = new URLSearchParams(a.search)
+      const tid = searchParams.get('tid')
+      this.$router.push(`/detail?tid=${tid || item.tid}`)
     },
     refresh () {
       this.resetList()
