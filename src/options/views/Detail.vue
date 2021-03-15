@@ -53,10 +53,13 @@
             </template>
           </a-tooltip>
           <div slot="content">
-            <div
-              v-html="filterContent(`${item.content}`)"
-              :class="{'post-content': true, 'active-collapse': showCollapse}"
-              @click="handleContenClick"></div>
+            <!--<div-->
+              <!--v-html="filterContent(`${item.content}`)"-->
+              <!--:class="{'post-content': true, 'active-collapse': showCollapse}"-->
+              <!--@click="handleContenClick"></div>-->
+            <HtmlContent
+              :html="filterContent(`${item.content}`)"
+            ></HtmlContent>
           </div>
         </a-comment>
       </a-list-item>
@@ -76,9 +79,13 @@
 import { filterContent, transferAnonyName } from '@/utils/index'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
+import HtmlContent from '@/components/HtmlContent.vue'
 
 export default {
   name: 'Detail',
+  components: {
+    HtmlContent
+  },
   data () {
     return {
       bg: chrome.extension.getBackgroundPage().bg,
