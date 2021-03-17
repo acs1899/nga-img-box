@@ -37,6 +37,12 @@ export const formatTime = function (time, cFormat) {
   })
 }
 
+const ifUrlAttach = function (str) {
+  if (str.match(/^https?:\/\/(img\d?\.ngacn\.cc|img\d?\.nga\.cn|ngaimg\.178\.com|img\d?\.nga\.178\.com|img\.nga\.donews\.com|img\.nga\.bnbsky\.com)\//)) {
+    return true
+  }
+}
+
 // 处理表情
 export const transferFacebread = function (str) {
   return str.replace(/\[s:(.{1,10}?)\]/gi, function ($0, $1) {
@@ -72,8 +78,14 @@ export const transferImg = function (str) {
         return bg.config.imgBaseApi
       })
     }
-    return `<img class="content-img default-img" src="${src}" />`
+    let originUrl = ''
+
+    if (ifUrlAttach(src) && src.match(/\.(thumb\.|thumb_s\.|thumb_ss\.|medium\.)[a-zA-Z0-9]+$/)) {
+      originUrl = src.replace(/\.(?:thumb\.|thumb_s\.|thumb_ss\.|medium\.)[a-zA-Z0-9]+$/, '')
+    }
+    return `<img class="content-img default-img" src="${src}" data-source="${originUrl}" />`
   }
+
   return str.replace(/\[img(-?\d{0,3})\](.+?)\[\/img\]/gi, function ($0, $1, $2) {
     return _imgGen($1, $2)
   })

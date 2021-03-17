@@ -53,13 +53,7 @@
             </template>
           </a-tooltip>
           <div slot="content">
-            <!--<div-->
-              <!--v-html="filterContent(`${item.content}`)"-->
-              <!--:class="{'post-content': true, 'active-collapse': showCollapse}"-->
-              <!--@click="handleContenClick"></div>-->
-            <HtmlContent
-              :html="filterContent(`${item.content}`)"
-            ></HtmlContent>
+            <HtmlContent :html="filterContent(`${item.content}`)" />
           </div>
         </a-comment>
       </a-list-item>
@@ -153,12 +147,6 @@ export default {
   methods: {
     filterContent,
     transferAnonyName,
-    handleContenClick (e) {
-      const target = e.target
-      if (target.classList.contains('collapse_btn')) {
-        this.showCollapse = true
-      }
-    },
     handleChangePage (page) {
       this.params.page = page
       this.getList()
@@ -202,29 +190,34 @@ export default {
         }
 
         this.checkFocus()
-
-        this.viewer && this.viewer.destroy()
-        setTimeout(() => {
-          this.viewer = new Viewer(document.querySelectorAll('.post-list')[0], {
-            filter (image) {
-              return image.classList.contains('content-img')
-            },
-            button: false,
-            focus: false,
-            fullscreen: false,
-            loop: false,
-            rotatable: false,
-            scalable: false,
-            slideOnTouch: false,
-            title: false,
-            toggleOnDblclick: false,
-            toolbar: false,
-            tooltip: false,
-            transition: false,
-            zoomOnTouch: false
-          })
-        }, 1000)
+        this.initImgViewer()
       })
+    },
+    initImgViewer () {
+      this.viewer && this.viewer.destroy()
+      setTimeout(() => {
+        this.viewer = new Viewer(document.querySelectorAll('.post-list')[0], {
+          filter (image) {
+            return image.classList.contains('content-img')
+          },
+          url (image) {
+            return image.getAttribute('data-source') || image.src
+          },
+          button: false,
+          focus: false,
+          fullscreen: false,
+          loop: false,
+          rotatable: false,
+          scalable: false,
+          slideOnTouch: false,
+          title: false,
+          toggleOnDblclick: false,
+          toolbar: false,
+          tooltip: false,
+          transition: false,
+          zoomOnTouch: false
+        })
+      }, 1000)
     },
     getAvatar (avatar) {
       if (typeof avatar === 'string') {
@@ -325,40 +318,6 @@ export default {
     cursor: default;
     &:hover {
       color: rgba(0, 0, 0, 0.45);
-    }
-  }
-  .post-content {
-    .del {
-      text-decoration: line-through;
-      color: gray;
-    }
-    .facebread {
-      vertical-align: -12px;
-    }
-    .content-img {
-      display: inline-block;
-      margin: 2px;
-    }
-    .default-img {
-      width: 100px;
-      cursor: zoom-in;
-    }
-    .quote {
-      padding: 10px 15px;
-      background-color: #f3f5f7;
-    }
-    .collapse_block {
-      display: none;
-    }
-    &.active-collapse {
-      .collapse_block {
-        display: block;
-      }
-    }
-    &.active-collapse {
-      .collapse_btn {
-        display: none;
-      }
     }
   }
 }
