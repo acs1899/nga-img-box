@@ -43,6 +43,12 @@
               <a-icon type="dislike" style="margin-right: 8px" />
               {{ item.score_2 }}
             </span>
+            <span class="de-action" v-if="!params.authorid && item.authorid > 0">
+              <span style="cursor: pointer" @click="onlyAuthor(item.authorid)">只看TA</span>
+            </span>
+            <span class="de-action" v-if="params.authorid && item.authorid === params.authorid">
+              <span style="cursor: pointer" @click="onlyAuthor()">取消只看TA</span>
+            </span>
           </template>
           <a-tooltip slot="datetime" :title="item.postdate">
             <template v-if="item.authorid === authorId">
@@ -166,6 +172,7 @@ export default {
       ],
       params: {
         tid: this.$route.query.tid,
+        authorid: '',
         page: 1
       },
       pageParams: {
@@ -259,6 +266,15 @@ export default {
           zoomOnTouch: false
         })
       }, 1000)
+    },
+    onlyAuthor (id) {
+      if (id) {
+        this.params.authorid = id
+      } else {
+        this.params.authorid = ''
+      }
+      this.params.page = 1
+      this.getList()
     },
     getAvatar (avatar) {
       if (typeof avatar === 'string') {
