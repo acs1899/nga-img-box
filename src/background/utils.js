@@ -138,7 +138,7 @@ export const removeFocus = function (ids, callback) {
 }
 
 // 清空关注
-export const clearFocus = function (ids, callback) {
+export const clearFocus = function (callback) {
   chrome.storage.local.clear(function () {
     callback && callback()
   })

@@ -242,7 +242,9 @@ export default {
         okText: '确定',
         cancelText: '取消',
         onOk: () => {
-          this.bg.removeFocus(data.tid)
+          this.bg.removeFocus(data.tid, () => {
+            this.bg.tipNewImg()
+          })
         },
         onCancel () {}
       })
@@ -254,7 +256,9 @@ export default {
         okText: '确定',
         cancelText: '取消',
         onOk: () => {
-          this.bg.clearFocus()
+          this.bg.clearFocus(() => {
+            this.bg.tipNewImg()
+          })
         },
         onCancel () {}
       })

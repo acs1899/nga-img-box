@@ -10,7 +10,8 @@
           </a-empty>
         </keep-alive>
       </a-tab-pane>
-      <a-tab-pane key="focus" tab="关注列表">
+      <a-tab-pane key="focus">
+        <a-badge :count="newImg" slot="tab">关注列表</a-badge>
         <focus />
       </a-tab-pane>
       <a-tab-pane key="setting" tab="设置">
@@ -37,11 +38,19 @@ export default {
   data () {
     return {
       bg: chrome.extension.getBackgroundPage().bg,
-      manifest: chrome.runtime.getManifest()
+      manifest: chrome.runtime.getManifest(),
+      newImg: 0
     }
   },
   created () {
     this.bg.checkCookie()
+    this.getNewImg()
+    // 监听storage变化
+    chrome.storage.onChanged.addListener(this.getNewImg)
+  },
+  beforeDestroy () {
+    // 清除storage监听
+    chrome.storage.onChanged.removeListener(this.getNewImg)
   },
   computed: {
     ...mapState({
@@ -51,6 +60,22 @@ export default {
   },
   methods: {
     ...mapMutations(['setPath']),
+    getNewImg () {
+      this.bg.getAllFocus((arr) => {
+        const newObj = arr.reduce((acc, curr) => {
+          return {
+            newImgLength: acc.newImgLength + curr.newImgLength
+          }
+        }, { newImgLength: 0 })
+
+        // 收集到新图片时，在tab上提示
+        if (newObj.newImgLength > 0) {
+          this.newImg = newObj.newImgLength
+        } else {
+          this.newImg = 0
+        }
+      })
+    },
     go (path) {
       this.setPath(path)
     }
