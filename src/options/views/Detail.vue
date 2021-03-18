@@ -30,10 +30,10 @@
       </a-page-header>
     </a-affix>
 
-    <a-list class="post-list" item-layout="vertical" :data-source="list">
+    <a-list class="post-list" item-layout="vertical" :data-source="list" :loading="loading">
       <a-list-item slot="renderItem" key="item.pid" slot-scope="item">
         <a-comment :author="userInfo[item.authorid] ? transferAnonyName(userInfo[item.authorid].username)[0] : `UID:${item.authorid}`">
-          <a-avatar v-if="userInfo[item.authorid]" slot="avatar" :src="getAvatar(userInfo[item.authorid].avatar)" />
+          <a-avatar slot="avatar" :src="getAvatar(userInfo[item.authorid].avatar) || defaultAvatar" />
           <template slot="actions">
             <span class="de-action">
               <a-icon type="like-o" style="margin-right: 8px" />
@@ -53,8 +53,46 @@
             </template>
           </a-tooltip>
           <div slot="content">
-            <HtmlContent :html="filterContent(`${item.content}`)" />
+            <!-- 回帖内容 -->
+            <template v-if="item.content">
+              <HtmlContent :html="filterContent(`${item.content}`)" />
+            </template>
+            <template v-if="!item.comment && item.comment_to_id">
+              {{ item.subject }}
+            </template>
           </div>
+          <!-- 附件 -->
+          <template v-if="item.attachs">
+            <a-divider  orientation="left">附件</a-divider>
+            <div class="attach-list">
+              <a-tag class="attach-item" v-for="val in item.attachs" :key="val.attachurl">
+                <div v-if="val.type === 'img'" style="height: 100%" @click="showAttachImg">
+                  <span>点击显示附件</span>
+                  <img class="attach-img" style="display: none" :src="bg.config.imgBaseApi + val.attachurl" @click.stop="handleClickAttach(val)" />
+                </div>
+                <div v-else @click="handleClickAttach(val)">
+                  {{ val.name }}
+                </div>
+              </a-tag>
+            </div>
+          </template>
+          <!-- 贴条 -->
+          <template v-if="item.comment">
+            <a-divider  orientation="left">评论</a-divider>
+            <a-comment
+              class="comment"
+              v-for="val in item.comment"
+              :key="val.pid"
+              :author="userInfo[val.authorid] ? transferAnonyName(userInfo[val.authorid].username)[0] : `UID:${val.authorid}`"
+            >
+              <a-avatar slot="avatar" :src="getAvatar(userInfo[val.authorid].avatar) || defaultAvatar" />
+              <div slot="content">
+                <template v-if="val.content">
+                  <HtmlContent :html="transferComment(`${val.content}`)" />
+                </template>
+              </div>
+            </a-comment>
+          </template>
         </a-comment>
       </a-list-item>
     </a-list>
@@ -70,10 +108,11 @@
 </template>
 
 <script>
-import { filterContent, transferAnonyName } from '@/utils/index'
+import { filterContent, transferAnonyName, transferComment } from '@/utils/index'
 import Viewer from 'viewerjs'
 import 'viewerjs/dist/viewer.css'
 import HtmlContent from '@/components/HtmlContent.vue'
+import defaultAvatar from '@/assets/img/default_avatar.jpeg'
 
 export default {
   name: 'Detail',
@@ -82,6 +121,7 @@ export default {
   },
   data () {
     return {
+      defaultAvatar,
       bg: chrome.extension.getBackgroundPage().bg,
       loading: false,
       isShowReply: false,
@@ -147,6 +187,7 @@ export default {
   methods: {
     filterContent,
     transferAnonyName,
+    transferComment,
     handleChangePage (page) {
       this.params.page = page
       this.getList()
@@ -275,6 +316,17 @@ export default {
         }
       })
     },
+    showAttachImg (e) {
+      const imgEle = e.target.querySelector('.attach-img')
+      const txtEle = e.target.querySelector('span')
+      console.log(imgEle, txtEle)
+
+      imgEle.style.display = 'block'
+      txtEle.style.display = 'none'
+    },
+    handleClickAttach (data) {
+      window.open(this.bg.config.imgBaseApi + data.attachurl)
+    },
     jumpToOrigin () {
       window.open(`${this.bg.config.detailApi}?tid=${this.params.tid}`)
     },
@@ -318,6 +370,26 @@ export default {
     cursor: default;
     &:hover {
       color: rgba(0, 0, 0, 0.45);
+    }
+  }
+  .comment {
+    margin-bottom: 15px;
+    padding: 0 15px;
+    background-color: #f3f5f7;
+  }
+  .attach-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    .attach-item {
+      margin-right: 10px;
+      margin-bottom: 10px;
+      width: 250px;
+      flex: 0 1 auto;
+      cursor: pointer;
+      .attach-img {
+        width: 100%;
+      }
     }
   }
 }

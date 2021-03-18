@@ -37,6 +37,7 @@ export const formatTime = function (time, cFormat) {
   })
 }
 
+// 是否为附件地址
 const ifUrlAttach = function (str) {
   if (str.match(/^https?:\/\/(img\d?\.ngacn\.cc|img\d?\.nga\.cn|ngaimg\.178\.com|img\d?\.nga\.178\.com|img\.nga\.donews\.com|img\.nga\.bnbsky\.com)\//)) {
     return true
@@ -123,6 +124,11 @@ export const transferQuote = function (str) {
   return str
 }
 
+// 处理贴条
+export const transferComment = function (str) {
+  return str.replace(/^\[b\]Reply to \[(?:tid|pid)=[\d,]+\](?:Reply|Topic)\[\/(?:tid|pid)\] Post by .+?\[\/b\](?:<br\/?>)*/gi, '')
+}
+
 // 处理回复
 export const transferReply = function (str) {
   str = str.replace(/\[(tid|pid|stid)=?([\d,]{0,50})\](.+?)\[\/\1\]/gi, function ($0, $1, $2, $3) {
@@ -138,7 +144,7 @@ export const transferReply = function (str) {
 // 处理用户标签
 export const transferUser = function (str) {
   return str.replace(/\[uid=?(\d{0,50})\](.+?)\[\/uid\]/gi, function ($0, $1, $2) {
-    return `<strong>${$2}</strong>`
+    return `<strong>${$1 ? $2 : transferAnonyName($2)[0]}</strong>`
   })
 }
 
