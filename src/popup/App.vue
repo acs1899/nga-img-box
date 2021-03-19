@@ -22,7 +22,7 @@
           <a-col :span="8">
             <a @click="jumpToSetting">
               <a-icon theme="filled" type="setting" />
-              设置
+              控制面板
             </a>
           </a-col>
           <a-col class="f-r" :span="8" :offset="8">

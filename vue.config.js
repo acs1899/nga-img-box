@@ -18,8 +18,6 @@ module.exports = {
     }
   },
   chainWebpack: (config) => {
-    config.resolve.alias
-      .set('dist', resolve('node_modules/vue/dist/'))
     config.plugin('copy')
       .tap(args => {
         args[0].push({
