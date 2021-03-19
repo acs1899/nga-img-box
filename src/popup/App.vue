@@ -19,13 +19,13 @@
       </a-list-item>
       <a-list-item>
         <a-row>
-          <a-col :span="8">
+          <a-col :span="10">
             <a @click="jumpToSetting">
               <a-icon theme="filled" type="setting" />
               控制面板
             </a>
           </a-col>
-          <a-col class="f-r" :span="8" :offset="8">
+          <a-col class="f-r" :span="8" :offset="6">
             <a @click="jumpToFeadback">
               <a-icon theme="filled" type="message" />
               反馈
