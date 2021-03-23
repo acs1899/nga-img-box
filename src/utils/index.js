@@ -132,7 +132,7 @@ export const transferComment = function (str) {
 // 处理回复
 export const transferReply = function (str) {
   str = str.replace(/\[(tid|pid|stid)=?([\d,]{0,50})\](.+?)\[\/\1\]/gi, function ($0, $1, $2, $3) {
-    if ($3 === 'Reply') {
+    if ($3 === 'Reply' || $3 === 'Topic') {
       return '回复'
     }
   })
