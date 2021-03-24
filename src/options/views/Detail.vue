@@ -63,6 +63,7 @@
             <template v-if="item.content">
               <HtmlContent :html="filterContent(`${item.content}`)" />
             </template>
+            <!-- 贴条楼层内容 -->
             <template v-if="!item.comment && item.comment_to_id">
               {{ item.subject }}
             </template>
@@ -83,7 +84,7 @@
             </div>
           </template>
           <!-- 贴条 -->
-          <template v-if="item.comment">
+          <template v-if="item.comment && item.comment.length">
             <a-divider  orientation="left">评论</a-divider>
             <a-comment
               class="comment"
@@ -225,7 +226,14 @@ export default {
           ...__U
         }
 
-        this.list = Object.keys(__R).map((item) => __R[item])
+        this.list = Object.keys(__R).map((item) => {
+          if (__R[item].comment) {
+            __R[item].comment = Object.keys(__R[item].comment).map(val => __R[item].comment[val])
+          }
+
+          return __R[item]
+        })
+
         this.authorId = __T.authorid
         this.pageParams.page = res.data.__PAGE
         this.pageParams.pageSize = res.data.__R__ROWS
