@@ -16,7 +16,18 @@
           </a-select-option>
         </a-select>
         <a-button @click="refresh">刷新</a-button>
+        <a-button type="primary" @click="showSubForums" v-if="subForums.length">子版块</a-button>
       </template>
+      <a-card v-show="subForumVisible">
+        <a-row>
+          <a-col :span="8" v-for="item in subForums" :key="item.id">
+            <a-checkbox :disabled="item.hasChecked" :defaultChecked="item.checked" :value="item.tid" @change="onSubChange">
+              <router-link :to="`/list?fid=${item.id}&title=${item.title}&ff=${params.fid}`">{{ item.title }}</router-link>
+            </a-checkbox>
+            <p class="sub-forum-des">{{ item.subTitle }}<br></p>
+          </a-col>
+        </a-row>
+      </a-card>
     </a-page-header>
     <a-list
       class="thread-list"
@@ -61,10 +72,13 @@ export default {
       bg: chrome.extension.getBackgroundPage().bg,
       loading: false,
       finished: false,
+      subForumVisible: false,
       title: this.$route.query.title,
       list: [],
+      subForums: [],
       params: {
-        fid: this.$route.query.fid,
+        fid: this.$route.query.fid || '',
+        ff: this.$route.query.ff || '',
         page: 1,
         order_by: 'postdatedesc'
       },
@@ -92,16 +106,49 @@ export default {
   methods: {
     ...mapMutations(['noKeepAlive']),
     formatTime,
+    showSubForums () {
+      this.subForumVisible = !this.subForumVisible
+    },
+    onSubChange (e) {
+      const checked = e.target.checked
+      const tid = e.target.value
+      const data = checked ? { del: tid } : { add: tid }
+
+      this.bg.subSubForums(data, { fid: this.params.fid }, (res) => {
+        if (res.data && res.data[0] === '操作成功 请刷新页面') {
+          this.refresh()
+        }
+      })
+    },
     getList () {
       this.loading = true
-      this.bg.getList({
+      const params = {
         ...this.params
-      }, (res) => {
+      }
+
+      if (params.ff === '') {
+        delete params.ff
+      }
+      this.bg.getList(params, (res) => {
         if (res) {
           this.loading = false
           if (res.data.__MESSAGE && res.data.__MESSAGE[1]) {
             this.$message.warning(res.data.__MESSAGE[1])
           }
+
+          this.subForums = res.data.__F && Object.keys(res.data.__F.sub_forums).map((item) => {
+            const f = res.data.__F.sub_forums[item]
+            f[4] |= 0
+
+            return {
+              id: `${f[0]}`,
+              tid: `${f[3]}`,
+              title: f[1],
+              subTitle: f[2],
+              hasChecked: !((f[4] & 2) || (f[4] & 768) === 768 || (f[4] & 1280) === 1280),
+              checked: !!(f[4] & 4)
+            }
+          })
 
           this.list = Object.keys(res.data.__T).map((item) => {
             res.data.__T[item].isFocus = false
@@ -171,6 +218,11 @@ export default {
 
 <style lang="scss">
 .option-app-list {
+  .sub-forum-des {
+    padding-left: 22px;
+    font-size: 12px;
+    color: #999;
+  }
   .thread-list {
     padding: 15px 20px;
     .sub-parent {

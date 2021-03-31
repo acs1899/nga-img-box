@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 import config from './config'
 import { parseJson } from './utils'
 
@@ -30,8 +31,7 @@ export const getUserInfo = function (options, callback) {
       ...options
     }
   }).then((res) => {
-    const str = res.data.replace('window.script_muti_get_var_store=', '')
-    parseJson(str, function (json) {
+    parseJson(res.data, function (json) {
       callback && callback(json)
     })
   }).catch((err) => {
@@ -43,8 +43,7 @@ export const getUserInfo = function (options, callback) {
 // 获取板块列表
 export const getRegionList = function (callback) {
   axios.get(config.regionApi).then((res) => {
-    const str = res.data.replace('window.script_muti_get_var_store=', '')
-    parseJson(str, function (json) {
+    parseJson(res.data, function (json) {
       callback && callback(json)
     })
   }).catch((err) => {
@@ -77,6 +76,42 @@ export const getList = function (options, callback) {
       const { __GLOBAL } = json.data
       updateImgBase(__GLOBAL._ATTACH_BASE_VIEW)
 
+      callback && callback(json)
+    }
+  }).catch((err) => {
+    console.log(err)
+    callback && callback(err.response.data)
+  })
+}
+
+// 关注 && 取消 子版块
+export const subSubForums = function (data, params, callback) {
+  axios({
+    method: 'post',
+    url: config.nukeApi,
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    data: qs.stringify({
+      ...params,
+      type: 1,
+      info: 'add_to_block_tids'
+    }),
+    params: {
+      lite: 'js',
+      noprefix: '',
+      __lib: 'user_option',
+      __act: 'set',
+      raw: 3,
+      ...data
+    }
+  }).then((res) => {
+    const json = res.data
+    if (typeof json === 'string') {
+      parseJson(json, function (json) {
+        callback && callback(json)
+      })
+    } else {
       callback && callback(json)
     }
   }).catch((err) => {

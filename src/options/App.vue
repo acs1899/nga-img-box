@@ -3,7 +3,7 @@
     <a-tabs :activeKey="currentPath" @change="go">
       <a-tab-pane key="region" tab="浏览">
         <keep-alive :include="keepAliveComponents">
-          <router-view v-if="bg.config.ngaUid" />
+          <router-view v-if="bg.config.ngaUid" :key="$route.fullPath" />
           <a-empty v-else>
             <span slot="description"> 请先关联账号 </span>
             <a-button type="primary" @click="go('setting')">去关联</a-button>
